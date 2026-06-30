@@ -1,14 +1,14 @@
 body {
   font-family: Arial;
-  background: #f5f5f5;
-  text-align: center;
   margin: 0;
+  text-align: center;
+  background: #f5f5f5;
 }
 
 .panel {
   background: white;
-  padding: 20px;
   margin: 20px auto;
+  padding: 20px;
   width: 520px;
   border-radius: 10px;
 }
@@ -37,13 +37,8 @@ button {
   font-size: 10px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-}
-
 /* =========================
-   PRINT MODE (CLAU REAL)
+   PRINT MODE FINAL (6 PER PÀGINA)
    ========================= */
 
 @media print {
@@ -60,32 +55,35 @@ button {
     display: block;
   }
 
- .page {
-  width: 210mm;
-  height: 297mm;
+  /* 🔥 A4 FIX REAL */
+  .page {
+    width: 210mm;
+    height: 297mm;
 
-  padding: 8mm;
-  box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 8mm;
 
-  display: grid;
+    display: grid;
 
-  /* 🔥 2 columnes */
-  grid-template-columns: 1fr 1fr;
+    /* 2 columnes */
+    grid-template-columns: 1fr 1fr;
 
-  /* 🔥 3 files = 6 cartrons */
-  grid-template-rows: repeat(3, 1fr);
+    /* 🔥 3 files = 6 cartrons */
+    grid-template-rows: repeat(3, 1fr);
 
-  gap: 4mm;
+    gap: 4mm;
 
-  page-break-after: always;
-}
+    page-break-after: always;
+  }
 
   .card {
     border: 2px solid black;
-    padding: 4mm;
-    font-size: 11px;
+    padding: 3mm;
+    font-size: 10px;
+
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
   table {
@@ -101,18 +99,14 @@ button {
     overflow: hidden;
   }
 
-  /* 🔥 AQUEST ÉS EL TEXT VERTICAL REAL */
   .cell {
     position: absolute;
     top: 50%;
     left: 50%;
-
     transform: translate(-50%, -50%) rotate(-90deg);
 
-    width: 140%;
+    font-size: 8px;
     text-align: center;
-
-    font-size: 9px;
-    line-height: 1.1;
+    width: 140%;
   }
 }
