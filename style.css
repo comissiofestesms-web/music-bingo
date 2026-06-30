@@ -34,16 +34,10 @@ button {
   width: 200px;
   border: 2px solid black;
   margin: 10px;
-  font-size: 10px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
 }
 
 /* =========================
-   PRINT FINAL PRO
+   PRINT FIXAT 100% REAL
    ========================= */
 
 @media print {
@@ -60,34 +54,33 @@ button {
     display: block;
   }
 
+  /* 🔥 PÀGINA BLOQUEJADA */
   .page {
     width: 210mm;
     height: 297mm;
 
-    padding: 8mm;
-    box-sizing: border-box;
+    display: grid !important;
 
-    display: grid;
-
-    /* 🔥 3 columnes */
-    grid-template-columns: repeat(3, 1fr);
-
-    /* 🔥 2 files */
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-rows: repeat(2, 1fr) !important;
 
     gap: 4mm;
 
+    padding: 8mm;
+    box-sizing: border-box;
+
     page-break-after: always;
+
+    /* 🔥 CLAU: evita que Chrome reordeni */
+    align-content: stretch;
+    justify-content: stretch;
   }
 
   .card {
     border: 2px solid black;
     padding: 3mm;
-    font-size: 10px;
-
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
+    font-size: 10px;
   }
 
   table {
@@ -108,7 +101,6 @@ button {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(-90deg);
-
     font-size: 8px;
     width: 140%;
     text-align: center;
