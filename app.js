@@ -97,12 +97,12 @@ function exportPDF() {
 
   const label = getLabel();
 
-  for (let i=0;i<cards.length;i+=4) {
+  for (let i=0;i<cards.length;i+=6) {
 
     let page = document.createElement("div");
     page.className = "page";
 
-    cards.slice(i,i+4).forEach((card,idx)=>{
+    cards.slice(i,i+6).forEach((card,idx)=>{
 
       let div = document.createElement("div");
       div.className = "card";
