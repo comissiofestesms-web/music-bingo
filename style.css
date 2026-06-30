@@ -60,19 +60,25 @@ button {
     display: block;
   }
 
-  .page {
-    width: 210mm;
-    height: 297mm;
-    padding: 10mm;
-    box-sizing: border-box;
+ .page {
+  width: 210mm;
+  height: 297mm;
 
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 6mm;
+  padding: 8mm;
+  box-sizing: border-box;
 
-    page-break-after: always;
-  }
+  display: grid;
+
+  /* 🔥 2 columnes */
+  grid-template-columns: 1fr 1fr;
+
+  /* 🔥 3 files = 6 cartrons */
+  grid-template-rows: repeat(3, 1fr);
+
+  gap: 4mm;
+
+  page-break-after: always;
+}
 
   .card {
     border: 2px solid black;
