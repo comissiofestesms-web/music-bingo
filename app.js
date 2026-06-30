@@ -3,9 +3,9 @@ const SIZE = 4;
 
 let cards = [];
 
-// -------------------------
-// UTILITATS
-// -------------------------
+// ----------------------------
+// SONGS
+// ----------------------------
 
 function getSongs() {
   return document.getElementById("songInput").value
@@ -13,6 +13,24 @@ function getSongs() {
     .map(s => s.trim())
     .filter(Boolean);
 }
+
+function saveSongs() {
+  localStorage.setItem(getKey(), document.getElementById("songInput").value);
+  alert("Guardat");
+}
+
+function loadSongs() {
+  document.getElementById("songInput").value =
+    localStorage.getItem(getKey()) || "";
+}
+
+function getKey() {
+  return document.getElementById("bingoSelect").value;
+}
+
+// ----------------------------
+// UTILS
+// ----------------------------
 
 function shuffle(arr) {
   return arr
@@ -29,41 +47,38 @@ function chunk(arr, size) {
   return res;
 }
 
-function normalizeRow(row) {
+// IMPORTANT: fila sense ordre
+function normalize(row) {
   return row.slice().sort().join("|");
 }
 
-// -------------------------
-// GUARDAR / CARREGAR
-// -------------------------
-
-function saveSongs() {
-  localStorage.setItem("bingoSongs", document.getElementById("songInput").value);
-  alert("Guardat!");
-}
-
-function loadSongs() {
-  document.getElementById("songInput").value =
-    localStorage.getItem("bingoSongs") || "";
-}
-
-// -------------------------
-// GENERAR CARTRONS
-// -------------------------
+// ----------------------------
+// GENERATOR (OPCIÓ A)
+// ----------------------------
 
 function generateCards() {
   const songs = getSongs();
 
+  if (songs.length < 16) {
+    alert("Necessites mínim 16 cançons");
+    return;
+  }
+
   cards = [];
   let usedRows = new Set();
 
-  while (cards.length < CARDS_PER_BINGO) {
+  let attempts = 0;
+  const maxAttempts = 500000;
+
+  while (cards.length < CARDS_PER_BINGO && attempts < maxAttempts) {
+    attempts++;
 
     let card = shuffle(songs).slice(0, 16);
-    let rows = chunk(card, 4);
+    let rows = chunk(card, SIZE);
 
-    let keys = rows.map(normalizeRow);
+    let keys = rows.map(normalize);
 
+    // evitar files repetides dins el mateix bingo
     if (keys.some(k => usedRows.has(k))) continue;
 
     keys.forEach(k => usedRows.add(k));
@@ -71,19 +86,18 @@ function generateCards() {
     cards.push(card);
   }
 
-  renderCards();
+  renderPreview();
 }
 
-// -------------------------
+// ----------------------------
 // PREVIEW
-// -------------------------
+// ----------------------------
 
-function renderCards() {
+function renderPreview() {
   const out = document.getElementById("output");
   out.innerHTML = "";
 
   cards.slice(0, 40).forEach((card, i) => {
-
     let div = document.createElement("div");
     div.className = "card";
 
@@ -98,12 +112,11 @@ function renderCards() {
   });
 }
 
-// -------------------------
-// PDF / PRINT
-// -------------------------
+// ----------------------------
+// PDF PRINT (4 per pàgina A4 vertical)
+// ----------------------------
 
 function exportPDF() {
-
   const out = document.getElementById("output");
   out.innerHTML = "";
 
