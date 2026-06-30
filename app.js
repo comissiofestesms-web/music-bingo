@@ -117,6 +117,7 @@ function renderPreview() {
 // ----------------------------
 
 function exportPDF() {
+
   const out = document.getElementById("output");
   out.innerHTML = "";
 
@@ -132,13 +133,26 @@ function exportPDF() {
       let div = document.createElement("div");
       div.className = "card";
 
-      let html = `<b>Cartró ${i + idx + 1}</b><table>`;
+      let html = `<b>Cartró ${i + idx + 1}</b>`;
+
+      html += `<table>`;
 
       for (let r = 0; r < 4; r++) {
         html += "<tr>";
+
         for (let c = 0; c < 4; c++) {
-          html += `<td>${card[r * 4 + c]}</td>`;
+
+          let song = card[r * 4 + c];
+
+          html += `
+            <td>
+              <div class="cell">
+                ${formatSong(song)}
+              </div>
+            </td>
+          `;
         }
+
         html += "</tr>";
       }
 
@@ -152,4 +166,27 @@ function exportPDF() {
   }
 
   window.print();
+}
+
+// 🔥 fa salts de línia automàtics (efecte vertical real)
+function formatSong(text) {
+  if (!text) return "";
+
+  // talla llargada en línies
+  const words = text.split(" ");
+  let lines = [];
+  let line = "";
+
+  words.forEach(w => {
+    if ((line + w).length > 14) {
+      lines.push(line);
+      line = w + " ";
+    } else {
+      line += w + " ";
+    }
+  });
+
+  lines.push(line);
+
+  return lines.map(l => `<div>${l}</div>`).join("");
 }
