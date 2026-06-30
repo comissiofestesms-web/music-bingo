@@ -37,8 +37,13 @@ button {
   font-size: 10px;
 }
 
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
 /* =========================
-   PRINT MODE FINAL (6 PER PÀGINA)
+   PRINT FINAL PRO
    ========================= */
 
 @media print {
@@ -55,21 +60,20 @@ button {
     display: block;
   }
 
-  /* 🔥 A4 FIX REAL */
   .page {
     width: 210mm;
     height: 297mm;
 
-    box-sizing: border-box;
     padding: 8mm;
+    box-sizing: border-box;
 
     display: grid;
 
-    /* 2 columnes */
-    grid-template-columns: 1fr 1fr;
+    /* 🔥 3 columnes */
+    grid-template-columns: repeat(3, 1fr);
 
-    /* 🔥 3 files = 6 cartrons */
-    grid-template-rows: repeat(3, 1fr);
+    /* 🔥 2 files */
+    grid-template-rows: repeat(2, 1fr);
 
     gap: 4mm;
 
@@ -106,7 +110,7 @@ button {
     transform: translate(-50%, -50%) rotate(-90deg);
 
     font-size: 8px;
-    text-align: center;
     width: 140%;
+    text-align: center;
   }
 }
