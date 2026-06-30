@@ -23,6 +23,7 @@ function getSongs() {
 
 function saveSongs() {
   localStorage.setItem(getKey(), document.getElementById("songInput").value);
+  alert("Guardat!");
 }
 
 function loadSongs() {
@@ -31,7 +32,8 @@ function loadSongs() {
 }
 
 function shuffle(arr) {
-  return arr.map(v => [Math.random(), v])
+  return arr
+    .map(v => [Math.random(), v])
     .sort((a,b)=>a[0]-b[0])
     .map(v=>v[1]);
 }
@@ -89,7 +91,6 @@ function render(){
   });
 }
 
-/* 🔥 CLAU FINAL: 6 PER PÀGINA */
 function exportPDF(){
 
   const out = document.getElementById("output");
@@ -97,7 +98,7 @@ function exportPDF(){
 
   const label = getLabel();
 
-  for(let i=0;i<cards.length;i+=6){   // 🔥 6 aquí
+  for(let i=0;i<cards.length;i+=6){
 
     let page = document.createElement("div");
     page.className = "page";
@@ -108,7 +109,6 @@ function exportPDF(){
       div.className = "card";
 
       let html = `<b>Cartró ${i+idx+1} - ${label}</b>`;
-
       html += `<table>`;
 
       for(let r=0;r<4;r++){
