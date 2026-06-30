@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <title>Music Bingo Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🎵 Music Bingo Generator</h1>
+
+<div class="panel">
+
+  <h2>Selecciona bingo</h2>
+  <select id="bingoSelect">
+    <option>Bingo1</option>
+    <option>Bingo2</option>
+    <option>Bingo3</option>
+  </select>
+
+  <h2>Cançons</h2>
+  <textarea id="songInput" placeholder="Una cançó per línia..."></textarea>
+
+  <button onclick="saveSongs()">💾 Guardar cançons</button>
+  <button onclick="loadSongs()">📥 Carregar</button>
+
+  <h2>Generació</h2>
+  <button onclick="generateCards()">🎲 Generar 700 cartrons</button>
+  <button onclick="exportPDF()">🖨 Exportar PDF</button>
+
+</div>
+
+<div id="output"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
