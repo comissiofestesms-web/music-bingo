@@ -7,15 +7,11 @@ let cards = [];
 // UTILITATS
 // -------------------------
 
-function getBingoKey() {
-  return document.getElementById("bingoSelect").value;
-}
-
 function getSongs() {
   return document.getElementById("songInput").value
     .split("\n")
     .map(s => s.trim())
-    .filter(s => s.length > 0);
+    .filter(Boolean);
 }
 
 function shuffle(arr) {
@@ -33,7 +29,6 @@ function chunk(arr, size) {
   return res;
 }
 
-// 🔥 IMPORTANT: normalitza la fila (ordre NO importa)
 function normalizeRow(row) {
   return row.slice().sort().join("|");
 }
@@ -43,81 +38,51 @@ function normalizeRow(row) {
 // -------------------------
 
 function saveSongs() {
-  localStorage.setItem(getBingoKey(), document.getElementById("songInput").value);
-  alert("Cançons guardades!");
+  localStorage.setItem("bingoSongs", document.getElementById("songInput").value);
+  alert("Guardat!");
 }
 
 function loadSongs() {
   document.getElementById("songInput").value =
-    localStorage.getItem(getBingoKey()) || "";
+    localStorage.getItem("bingoSongs") || "";
 }
 
 // -------------------------
-// GENERADOR PRINCIPAL
+// GENERAR CARTRONS
 // -------------------------
 
 function generateCards() {
   const songs = getSongs();
 
-  if (songs.length < 16) {
-    alert("Necessites mínim 16 cançons");
-    return;
-  }
-
   cards = [];
   let usedRows = new Set();
 
-  let attempts = 0;
-  const maxAttempts = 500000;
+  while (cards.length < CARDS_PER_BINGO) {
 
-  while (cards.length < CARDS_PER_BINGO && attempts < maxAttempts) {
-    attempts++;
+    let card = shuffle(songs).slice(0, 16);
+    let rows = chunk(card, 4);
 
-    // agafa 16 cançons aleatòries
-    let shuffled = shuffle(songs).slice(0, 16);
+    let keys = rows.map(normalizeRow);
 
-    // divideix en 4 files
-    let rows = chunk(shuffled, SIZE);
+    if (keys.some(k => usedRows.has(k))) continue;
 
-    // normalitza files (ordre no importa)
-    let rowKeys = rows.map(normalizeRow);
+    keys.forEach(k => usedRows.add(k));
 
-    // comprova si alguna fila ja existeix globalment
-    let conflict = rowKeys.some(k => usedRows.has(k));
-
-    if (conflict) continue;
-
-    // guarda files com a usades
-    rowKeys.forEach(k => usedRows.add(k));
-
-    // evita duplicat exacte de cartró
-    let cardKey = rowKeys.sort().join("##");
-
-    if (cards.some(c => c.__key === cardKey)) continue;
-
-    cards.push({
-      data: shuffled,
-      __key: cardKey
-    });
-  }
-
-  if (cards.length < CARDS_PER_BINGO) {
-    alert("No s'han pogut generar tots els cartrons. Prova amb més cançons.");
+    cards.push(card);
   }
 
   renderCards();
 }
 
 // -------------------------
-// RENDER (PREVIEW)
+// PREVIEW
 // -------------------------
 
 function renderCards() {
   const out = document.getElementById("output");
   out.innerHTML = "";
 
-  cards.slice(0, 50).forEach((cardObj, i) => {
-    let card = cardObj.data;
+  cards.slice(0, 40).forEach((card, i) => {
 
     let div = document.createElement("div");
     div.className = "card";
@@ -134,42 +99,44 @@ function renderCards() {
 }
 
 // -------------------------
-// PDF EXPORT
+// PDF / PRINT
 // -------------------------
 
 function exportPDF() {
-  let win = window.open("");
 
-  let html = "<html><body>";
+  const out = document.getElementById("output");
+  out.innerHTML = "";
 
-  cards.forEach((cardObj, i) => {
-    let card = cardObj.data;
+  for (let i = 0; i < cards.length; i += 4) {
 
-    if (i % 4 === 0) {
-      html += "<div style='page-break-after:always;display:grid;grid-template-columns:1fr 1fr;gap:10px;'>";
-    }
+    let page = document.createElement("div");
+    page.className = "page";
 
-    html += "<div style='border:1px solid black;padding:10px;width:45%;font-size:12px;'>";
+    let group = cards.slice(i, i + 4);
 
-    html += "<b>Cartró " + (i + 1) + "</b><br><br>";
+    group.forEach((card, idx) => {
 
-    html += "<table border='1' style='width:100%;text-align:center;border-collapse:collapse;'>";
+      let div = document.createElement("div");
+      div.className = "card";
 
-    for (let r = 0; r < 4; r++) {
-      html += "<tr>";
-      for (let c = 0; c < 4; c++) {
-        html += "<td>" + card[r * 4 + c] + "</td>";
+      let html = `<b>Cartró ${i + idx + 1}</b><table>`;
+
+      for (let r = 0; r < 4; r++) {
+        html += "<tr>";
+        for (let c = 0; c < 4; c++) {
+          html += `<td>${card[r * 4 + c]}</td>`;
+        }
+        html += "</tr>";
       }
-      html += "</tr>";
-    }
 
-    html += "</table></div>";
+      html += "</table>";
 
-    if (i % 4 === 3) html += "</div>";
-  });
+      div.innerHTML = html;
+      page.appendChild(div);
+    });
 
-  html += "</body></html>";
+    out.appendChild(page);
+  }
 
-  win.document.write(html);
-  win.document.close();
+  window.print();
 }
