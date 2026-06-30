@@ -23,7 +23,6 @@ function getSongs() {
 
 function saveSongs() {
   localStorage.setItem(getKey(), document.getElementById("songInput").value);
-  alert("Guardat");
 }
 
 function loadSongs() {
@@ -32,37 +31,37 @@ function loadSongs() {
 }
 
 function shuffle(arr) {
-  return arr
-    .map(v => [Math.random(), v])
-    .sort((a,b) => a[0]-b[0])
-    .map(v => v[1]);
+  return arr.map(v => [Math.random(), v])
+    .sort((a,b)=>a[0]-b[0])
+    .map(v=>v[1]);
 }
 
 function chunk(arr, size) {
-  let r = [];
-  for (let i=0;i<arr.length;i+=size) r.push(arr.slice(i,i+size));
+  let r=[];
+  for(let i=0;i<arr.length;i+=size) r.push(arr.slice(i,i+size));
   return r;
 }
 
-function normalize(row) {
+function normalize(row){
   return row.slice().sort().join("|");
 }
 
-function generateCards() {
-  const songs = getSongs();
+function generateCards(){
 
+  const songs = getSongs();
   cards = [];
+
   let used = new Set();
 
-  while (cards.length < CARDS_PER_BINGO) {
+  while(cards.length < CARDS_PER_BINGO){
 
     let card = shuffle(songs).slice(0,16);
     let rows = chunk(card, SIZE);
     let keys = rows.map(normalize);
 
-    if (keys.some(k => used.has(k))) continue;
+    if(keys.some(k=>used.has(k))) continue;
 
-    keys.forEach(k => used.add(k));
+    keys.forEach(k=>used.add(k));
 
     cards.push(card);
   }
@@ -70,7 +69,7 @@ function generateCards() {
   render();
 }
 
-function render() {
+function render(){
   const out = document.getElementById("output");
   out.innerHTML = "";
 
@@ -90,14 +89,15 @@ function render() {
   });
 }
 
-function exportPDF() {
+/* 🔥 CLAU FINAL: 6 PER PÀGINA */
+function exportPDF(){
 
   const out = document.getElementById("output");
   out.innerHTML = "";
 
   const label = getLabel();
 
-  for (let i=0;i<cards.length;i+=6) {
+  for(let i=0;i<cards.length;i+=6){   // 🔥 6 aquí
 
     let page = document.createElement("div");
     page.className = "page";
@@ -111,9 +111,9 @@ function exportPDF() {
 
       html += `<table>`;
 
-      for (let r=0;r<4;r++){
+      for(let r=0;r<4;r++){
         html += "<tr>";
-        for (let c=0;c<4;c++){
+        for(let c=0;c<4;c++){
           html += `<td><div class="cell">${card[r*4+c]}</div></td>`;
         }
         html += "</tr>";
