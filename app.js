@@ -8,10 +8,9 @@ function getKey() {
 }
 
 function getLabel() {
-  const k = getKey();
-  if (k === "Bingo1") return "B1";
-  if (k === "Bingo2") return "B2";
-  return "B3";
+  return getKey() === "Bingo1" ? "B1"
+       : getKey() === "Bingo2" ? "B2"
+       : "B3";
 }
 
 function getSongs() {
@@ -23,7 +22,6 @@ function getSongs() {
 
 function saveSongs() {
   localStorage.setItem(getKey(), document.getElementById("songInput").value);
-  alert("Guardat!");
 }
 
 function loadSongs() {
@@ -39,8 +37,8 @@ function shuffle(arr) {
 }
 
 function chunk(arr, size) {
-  let r=[];
-  for(let i=0;i<arr.length;i+=size) r.push(arr.slice(i,i+size));
+  let r = [];
+  for (let i=0;i<arr.length;i+=size) r.push(arr.slice(i,i+size));
   return r;
 }
 
@@ -49,7 +47,6 @@ function normalize(row){
 }
 
 function generateCards(){
-
   const songs = getSongs();
   cards = [];
 
@@ -82,15 +79,14 @@ function render(){
 
     div.innerHTML = `
       <b>Cartró ${i+1}</b>
-      <div class="grid">
-        ${card.map(c=>`<div>${c}</div>`).join("")}
-      </div>
+      ${card.map(c=>`<div>${c}</div>`).join("")}
     `;
 
     out.appendChild(div);
   });
 }
 
+/* 🔥 AQUEST ÉS EL FIX REAL 3x2 */
 function exportPDF(){
 
   const out = document.getElementById("output");
@@ -103,12 +99,15 @@ function exportPDF(){
     let page = document.createElement("div");
     page.className = "page";
 
-    cards.slice(i,i+6).forEach((card,idx)=>{
+    let group = cards.slice(i,i+6);
+
+    group.forEach((card,idx)=>{
 
       let div = document.createElement("div");
       div.className = "card";
 
       let html = `<b>Cartró ${i+idx+1} - ${label}</b>`;
+
       html += `<table>`;
 
       for(let r=0;r<4;r++){
@@ -128,5 +127,5 @@ function exportPDF(){
     out.appendChild(page);
   }
 
-  window.print();
+  setTimeout(() => window.print(), 200);
 }
