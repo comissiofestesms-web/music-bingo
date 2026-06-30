@@ -4,6 +4,22 @@ const SIZE = 4;
 let cards = [];
 
 // ----------------------------
+// BINGO KEY
+// ----------------------------
+
+function getKey() {
+  return document.getElementById("bingoSelect").value;
+}
+
+function getBingoLabel() {
+  const key = getKey();
+
+  if (key === "Bingo1") return "B1";
+  if (key === "Bingo2") return "B2";
+  return "B3";
+}
+
+// ----------------------------
 // SONGS
 // ----------------------------
 
@@ -16,16 +32,12 @@ function getSongs() {
 
 function saveSongs() {
   localStorage.setItem(getKey(), document.getElementById("songInput").value);
-  alert("Guardat");
+  alert("Guardat!");
 }
 
 function loadSongs() {
   document.getElementById("songInput").value =
     localStorage.getItem(getKey()) || "";
-}
-
-function getKey() {
-  return document.getElementById("bingoSelect").value;
 }
 
 // ----------------------------
@@ -47,13 +59,13 @@ function chunk(arr, size) {
   return res;
 }
 
-// IMPORTANT: fila sense ordre
-function normalize(row) {
+// fila sense ordre (clau única)
+function normalizeRow(row) {
   return row.slice().sort().join("|");
 }
 
 // ----------------------------
-// GENERATOR (OPCIÓ A)
+// GENERADOR (OPCIÓ A)
 // ----------------------------
 
 function generateCards() {
@@ -76,9 +88,9 @@ function generateCards() {
     let card = shuffle(songs).slice(0, 16);
     let rows = chunk(card, SIZE);
 
-    let keys = rows.map(normalize);
+    let keys = rows.map(normalizeRow);
 
-    // evitar files repetides dins el mateix bingo
+    // evitar files repetides
     if (keys.some(k => usedRows.has(k))) continue;
 
     keys.forEach(k => usedRows.add(k));
@@ -98,6 +110,7 @@ function renderPreview() {
   out.innerHTML = "";
 
   cards.slice(0, 40).forEach((card, i) => {
+
     let div = document.createElement("div");
     div.className = "card";
 
@@ -113,13 +126,15 @@ function renderPreview() {
 }
 
 // ----------------------------
-// PDF PRINT (4 per pàgina A4 vertical)
+// PDF / PRINT PRO
 // ----------------------------
 
 function exportPDF() {
 
   const out = document.getElementById("output");
   out.innerHTML = "";
+
+  const bingoLabel = getBingoLabel();
 
   for (let i = 0; i < cards.length; i += 4) {
 
@@ -133,7 +148,7 @@ function exportPDF() {
       let div = document.createElement("div");
       div.className = "card";
 
-      let html = `<b>Cartró ${i + idx + 1}</b>`;
+      let html = `<b>Cartró ${i + idx + 1} - ${bingoLabel}</b>`;
 
       html += `<table>`;
 
@@ -142,12 +157,10 @@ function exportPDF() {
 
         for (let c = 0; c < 4; c++) {
 
-          let song = card[r * 4 + c];
-
           html += `
             <td>
               <div class="cell">
-                ${formatSong(song)}
+                ${card[r * 4 + c]}
               </div>
             </td>
           `;
@@ -166,27 +179,4 @@ function exportPDF() {
   }
 
   window.print();
-}
-
-// 🔥 fa salts de línia automàtics (efecte vertical real)
-function formatSong(text) {
-  if (!text) return "";
-
-  // talla llargada en línies
-  const words = text.split(" ");
-  let lines = [];
-  let line = "";
-
-  words.forEach(w => {
-    if ((line + w).length > 14) {
-      lines.push(line);
-      line = w + " ";
-    } else {
-      line += w + " ";
-    }
-  });
-
-  lines.push(line);
-
-  return lines.map(l => `<div>${l}</div>`).join("");
 }
